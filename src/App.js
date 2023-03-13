@@ -3,45 +3,52 @@ import Header from "./Components/Header";
 import ToDoList from "./Components/ToDoList";
 
 export default class App extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      toDoName: "",
-      todoList: [
-        {
-          name: "Kirgiz",
-        },
-        {
-          name: "Margar",
-        },
-      ],
-      editable: false,
-    };
-  }
-  onToDoChange = (e) => {
-    this.setState({
-      toDoName: e.target.value,
-    });
-  };
+	constructor(props) {
+		super(props);
+		this.state = {
+			toDoName: "",
+			todoList: [
+				{
+					name: "Kirgiz",
+					id: Math.random()
+				},
+				{
+					name: "Margar",
+					id: Math.random()
+				},
+			],
+			editable: false,
+		};
+	}
+	onToDoChange = (e) => {
+		this.setState({
+			toDoName: e.target.value,
+		});
+	};
 
-  btnClicked = () => {
-    this.setState({
-      todoList: [...this.state.toDoList, { name: this.state.toDoName }],
-      toDoName: "",
-    });
-  };
+	btnClicked = () => {
+		this.setState({
+			todoList: [...this.state.todoList, { name: this.state.toDoName, id: Math.random() }],
+			toDoName: "",
+		});
+	};
 
-  render() {
-    console.log("App Comp");
+	btnDel = (id) => {
+		this.setState({
+			todoList: this.state.todoList.filter((item) => id != item.id),
+		});
+	}
 
-    return (
-      <div>
-        <Header
-          toDoName={this.state.toDoName}
-          onToDoChange={this.onToDoChange}
-        />
-        <ToDoList toDoList={this.state.todoList} addBtn={this.btnClicked} />
-      </div>
-    );
-  }
+	render() {
+		return (
+			<div>
+				<Header
+					toDoName={this.state.toDoName}
+					onToDoChange={this.onToDoChange}
+					onAddBtnClick={this.btnClicked}
+				/>
+				<ToDoList toDoList={this.state.todoList} onDelBtnClick={this.btnDel} />
+			</div>
+		);
+	}
 }

@@ -1,52 +1,34 @@
 import React from "react";
+import ToDoItem from "./ToDoItem";
 
 export default class ToDoList extends React.Component {
-  constructor(props) {
-    super(props);
-  }
+	constructor(props) {
+		super(props);
+	}
 
-  btnDel(indexD) {
-    this.props.setState({
-      todoList: this.props.todoList.filter((item, index) => indexD != index),
-    });
-    console.log(this.state);
-  }
-  btnEdit(indexD) {
-    this.setState({
-      todoList: this.state.todoList.map((item, index) => {
-        if (indexD === index) {
-          return {
-            ...item,
-            editable: true,
-          };
-        }
-        return item;
-      }),
-    });
-  }
+	btnEdit(indexD) {
+		this.setState({
+			todoList: this.state.todoList.map((item, index) => {
+				if (indexD === index) {
+					return {
+						...item,
+						editable: true,
+					};
+				}
+				return item;
+			}),
+		});
+	}
 
-  render() {
-    console.log("todo Comp");
-
-    return (
-      <>
-        {this.props.toDoList.map((item, index) => {
-          return (
-            <div key={index}>
-              {item.editable == true ? (
-                <input onChange={() => ""} />
-              ) : (
-                <div>{item.name}</div>
-              )}
-
-              <button onClick={this.btnDel.bind(this, index)}>Del</button>
-              <button onClick={this.btnEdit.bind(this, index)}>
-                {item.editable ? "Save" : "Edit"}
-              </button>
-            </div>
-          );
-        })}
-      </>
-    );
-  }
+	render() {
+		return (
+			<>
+				{this.props.toDoList.map((item, index) => {
+					return (
+						<ToDoItem key={item.id} toDo={item} onDeleteClick={this.props.onDelBtnClick}/>
+					);
+				})}
+			</>
+		);
+	}
 }

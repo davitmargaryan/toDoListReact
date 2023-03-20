@@ -1,142 +1,104 @@
 import React from "react";
 import Header from "./Components/Header";
 import ToDoList from "./Components/ToDoList";
+import { INITIAL_TODO_LIST } from "./constants/common";
 
 export default class App extends React.Component {
-	constructor(props) {
-		super(props);
-		this.state = {
-			toDoName: "",
-			todoList: [
-				{
-					name: "Kirgiz",
-					id: Math.random(),
-					isEditing: false,
-					isChecking: false,
+  constructor(props) {
+    super(props);
+    this.state = {
+      toDoName: "",
+      todoList: INITIAL_TODO_LIST,
+      counter: 0,
+    };
+  }
 
-				},
-				{
-					name: "Margar",
-					id: Math.random(),
-					isEditing: false,
-					isChecking: false,
+  filteredToDo = (status) => {
+    if (status === "all") {
+      this.setState({
+        todoList: [...this.state.todoList],
+      });
+    } else {
+      this.setState({
+        todoList: this.state.todoList.filter(
+          (item) => item.isChecking === status
+        ),
+      });
+    }
+  };
 
-				},
-			],
-			counter: 0,
-		};
-	}
+  changeIsChecking = (id, checked) => {
+    this.setState({
+      todoList: this.state.todoList.map((item) => {
+        if (id === item.id) {
+          return { ...item, checked };
+        }
+        return item;
+      }),
+    });
+  };
 
+  onSave = (id, newValue) =>
+    this.setState({
+      todoList: this.state.todoList.map((item) =>
+        id === item.id
+          ? {
+              ...item,
+              name: newValue,
+            }
+          : item
+      ),
+    });
 
-	filteredToDo = (status) => {
-		if (status === 'all') {
-			this.setState({
-				todoList: [...this.state.todoList]
-			})
+  onToDoChange = (e) => {
+    this.setState({
+      toDoName: e.target.value,
+    });
+  };
 
-		} else {
+  btnAddClicked = () => {
+    if (this.state.toDoName !== "") {
+      this.setState({
+        todoList: [
+          ...this.state.todoList,
+          {
+            name: this.state.toDoName,
+            id: Math.random(),
+            isChecking: false,
+          },
+        ],
+        toDoName: "",
+      });
+    }
+  };
 
-			this.setState({
-				todoList: this.state.todoList.filter((item) => item.isChecking === status)
-			})
+  onDelete = (id) => {
+    this.setState({
+      todoList: this.state.todoList.filter((toDo) => id !== toDo.id),
+    });
+  };
 
-		}
-	}
-
-
-
-
-	returnPrevName = (id, prevName) => {
-		this.setState({
-			todoList: this.state.todoList.map((item) => {
-				if (id === item.id) {
-					return { ...item, name: prevName }
-				}
-				return item;
-			})
-		})
-	}
-
-	changeIsEditing = (id, isEditing) => {
-		this.setState({
-			todoList: this.state.todoList.map((item) => {
-				if (id === item.id) {
-					return { ...item, isEditing }
-				}
-				return item;
-			})
-		})
-	}
-
-
-
-	changeIsChecking = (id, isChecking) => {
-		this.setState({
-			todoList: this.state.todoList.map((item) => {
-				if (id === item.id) {
-					return { ...item, isChecking: isChecking }
-				}
-				return item;
-			})
-		})
-	}
-
-	onEditingToDoNameChange = (id, newValue) => {
-		this.setState({
-			todoList: this.state.todoList.map((item) => {
-				if (id === item.id) {
-					return { ...item, name: newValue }
-				}
-				return item;
-			})
-		})
-	}
-
-
-	onToDoChange = (e) => {
-		this.setState({
-			toDoName: e.target.value,
-		});
-	};
-
-	btnAddClicked = () => {
-		if (this.state.toDoName !== '') {
-			this.setState({
-				todoList: [...this.state.todoList, { name: this.state.toDoName, id: Math.random(), isEditing: false, isChecking: false }],
-				toDoName: "",
-			});
-		}
-	};
-
-	btnDel = (id) => {
-		this.setState({
-			todoList: this.state.todoList.filter((toDo) => id !== toDo.id),
-		});
-	}
-
-	render() {
-		return (
-			<div id="main-container">
-				<div id='header'>
-					<Header
-						toDoName={this.state.toDoName}
-						onToDoChange={this.onToDoChange}
-						onAddBtnClick={this.btnAddClicked}
-					/>
-				</div>
-				<div id='toDo-list'>
-					<ToDoList
-						toDoList={this.state.todoList}
-						onDelBtnClick={this.btnDel}
-						onToDoChangeToDoList={this.onToDoChange}
-						changeIsEditing={this.changeIsEditing}
-						onEditingToDoNameChange={this.onEditingToDoNameChange}
-						returnPrevName={this.returnPrevName}
-						filteredToDo={this.filteredToDo}
-						changeIsChecking={this.changeIsChecking}
-					/>
-				</div>
-			</div>
-		);
-	}
+  render() {
+    return (
+      <div id="main-container">
+        <div id="header">
+          <Header
+            toDoName={this.state.toDoName}
+            onToDoChange={this.onToDoChange}
+            onAddBtnClick={this.btnAddClicked}
+          />
+        </div>
+        <div id="toDo-list">
+          <ToDoList
+            toDoList={this.state.todoList}
+            onDelete={this.onDelete}
+            onSave={this.onSave}
+            onToDoChangeToDoList={this.onToDoChange}
+            filteredToDo={this.filteredToDo}
+            changeIsChecking={this.changeIsChecking}
+          />
+        </div>
+      </div>
+    );
+  }
 }
